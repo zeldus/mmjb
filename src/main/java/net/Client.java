@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+
 public class Client implements Runnable {
     private static int idCounter = 0;
 
@@ -98,9 +99,7 @@ public class Client implements Runnable {
     public void terminateClient() {
         // TODO: Handle different client states during termination (e.g., logging out of player session)
         listening = false;
-        if(state == ClientState.IN_GAME) {
-            logout();
-        }
+        if(state == ClientState.IN_GAME) logout();
         state = ClientState.DISCONNECTED;
         server.removeClient(id);
     }

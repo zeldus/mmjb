@@ -2,10 +2,7 @@ package net.handler;
 
 import game.Player;
 import game.Room;
-import net.Client;
-import net.IncomingAction;
-import net.NetConstants;
-import net.Serializer;
+import net.*;
 
 import java.io.IOException;
 
@@ -39,7 +36,7 @@ public class ChatActionHandler extends ActionHandler {
 
         // Send bytes to each player in source player's room
         for(Player p : room.getPlayers()) {
-            p.getClient().send(bytes);
+            p.getClient().getServer().addOutgoingAction(new OutgoingAction(p.getClient(), bytes));
         }
     }
 }

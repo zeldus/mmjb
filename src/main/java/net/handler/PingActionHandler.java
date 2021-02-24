@@ -1,9 +1,6 @@
 package net.handler;
 
-import net.Client;
-import net.IncomingAction;
-import net.NetConstants;
-import net.Serializer;
+import net.*;
 
 import java.io.IOException;
 
@@ -32,6 +29,6 @@ public class PingActionHandler extends ActionHandler {
         byte[] bytes = s.getBytes();
 
         // Send bytes back to player
-        source.send(bytes);
+        source.getServer().addOutgoingAction(new OutgoingAction(source, bytes));
     }
 }

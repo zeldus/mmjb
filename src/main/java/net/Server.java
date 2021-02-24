@@ -21,7 +21,7 @@ public class Server implements Runnable {
 
     // Core
     private ServerSocket serverSocket;
-    private int port;
+    private final int port;
 
     private volatile boolean running = false;
     private volatile boolean listening = false;
@@ -33,7 +33,7 @@ public class Server implements Runnable {
     private final HashMap<Integer, Client> clients = new HashMap<>();
 
     // World
-    private final HashMap<Integer, Room> rooms = new HashMap<>();
+    private final HashMap<String, Room> rooms = new HashMap<>();
 
     // Actions
     private final HashMap<Short, ActionHandler> actionHandlers = new HashMap<>();
@@ -80,9 +80,18 @@ public class Server implements Runnable {
     }
 
     private void load() {
-        // TODO: Load Rooms
+        // Rooms
+        loadRooms();
 
-        // Load Action Handlers
+        // Action Handlers
+        loadHandlers();
+    }
+
+    private void loadRooms() {
+        rooms.put("Town", new Room());
+    }
+
+    private void loadHandlers() {
         actionHandlers.put(NetConstants.OpRecv.PING, new PingActionHandler());
         actionHandlers.put(NetConstants.OpRecv.CHAT, new ChatActionHandler());
     }
@@ -126,8 +135,8 @@ public class Server implements Runnable {
         rooms.values().forEach(Room::tick);
 
         // Process outgoing actions
-        //for(OutgoingAction a : outgoingActions) ...
-        //outgoingActions.clear();
+        for(OutgoingAction a : outgoingActions) a.send();
+        outgoingActions.clear();
     }
 
     public void shutdown() {
@@ -183,9 +192,10 @@ public class Server implements Runnable {
 
     private void clearActionsOf(Client client) {
         // Remove if from the provided client
-        Predicate<? super IncomingAction> filter = a -> a.getSource().getId() == client.getId();
-        incomingActions.removeIf(filter);
+        Predicate<? super IncomingAction> incomingFilter = a -> a.getSource().getId() == client.getId();
+        incomingActions.removeIf(incomingFilter);
 
-        // TODO: Do the same once outgoing actions are implemented
+        Predicate<? super OutgoingAction> outgoingFilter = a -> a.getDestination().getId() == client.getId();
+        outgoingActions.removeIf(outgoingFilter);
     }
 }
