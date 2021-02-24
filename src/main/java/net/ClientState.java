@@ -1,0 +1,10 @@
+package net;
+
+public enum ClientState {
+    WAITING_FOR_HANDSHAKE,
+    HANDSHAKE_APPROVED,
+    AUTHENTICATING,
+    CHOOSING_CHARACTER,
+    IN_GAME,
+    DISCONNECTED
+}
